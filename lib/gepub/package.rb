@@ -9,7 +9,7 @@ module GEPUB
     include InspectMixin
 
     extend Forwardable
-    attr_accessor :path, :metadata, :manifest, :spine, :bindings, :epub_backward_compat, :contents_prefix, :prefixes 
+    attr_accessor :path, :metadata, :manifest, :spine, :bindings, :epub_backward_compat, :contents_prefix, :prefixes, :guide_entries
     def_delegators :@manifest, :item_by_href
     def_delegators :@metadata, *Metadata::CONTENT_NODE_LIST.map {
       |x|
@@ -124,6 +124,7 @@ module GEPUB
       @spine = Spine.new(version)
       @bindings = Bindings.new
       @epub_backward_compat = true
+      @guide_entries = []
       yield self if block_given?
     end
 
@@ -191,6 +192,10 @@ module GEPUB
       item = add_item(href, attributes: attributes, id:id, content: content)
       @spine.push(item)
       item
+    end
+
+    def add_guide(type:, title:, href:)
+      @guide_entries << { type: type, title: title, href: href }
     end
 
     def spine_items
@@ -278,6 +283,13 @@ module GEPUB
           @metadata.to_xml(xml)
           @manifest.to_xml(xml)
           @spine.to_xml(xml)
+          if @guide_entries.any?
+            xml.guide {
+              @guide_entries.each do |ref|
+                xml.reference('type' => ref[:type], 'title' => ref[:title], 'href' => ref[:href])
+              end
+            }
+          end
           @bindings.to_xml(xml)
         }
       }
