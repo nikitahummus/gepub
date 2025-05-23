@@ -360,7 +360,7 @@ EOF
           xml.navMap {
             @toc.each {
               |x|
-              xml.navPoint('id' => "#{x[:item].itemid}_#{x[:id]}", 'playOrder' => "#{count}") {
+              xml.navPoint('id' => "navPoint-#{count}", 'playOrder' => "#{count}") {
                 xml.navLabel {
                   xml.text_  "#{x[:text]}"
                 }
