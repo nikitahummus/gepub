@@ -346,6 +346,7 @@ EOF
     def ncx_xml
       builder = Nokogiri::XML::Builder.new {
         |xml|
+        xml.doc.create_internal_subset('ncx', '-//NISO//DTD ncx 2005-1//EN', 'http://www.daisy.org/z3986/2005/ncx-2005-1.dtd')
         xml.ncx('xmlns' => 'http://www.daisy.org/z3986/2005/ncx/', 'version' => '2005-1') {
           xml.head {
             xml.meta('name' => 'dtb:uid', 'content' => "#{self.identifier}") 
